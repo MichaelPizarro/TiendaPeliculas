@@ -1,0 +1,49 @@
+-- Consulta A --
+SELECT f.film_id,f.title,f.length,f.rental_duration,f.rental_rate,f.rating
+FROM film AS f
+WHERE f.description LIKE '%Secret Agent%' AND f.rental_duration >= 5
+ORDER BY f.length DESC, f.rental_rate ASC;
+
+-- Consulta B --
+SELECT f.title,f.length,f.release_year,f.rental_rate,f.special_features
+FROM film AS f
+WHERE f.rating = 'R'
+ORDER BY f.length DESC
+LIMIT 10;
+
+-- Consulta C --
+SELECT f.film_id,f.title,f.release_year,f.rating
+FROM film AS f
+INNER JOIN
+film_actor AS fa ON f.film_id = fa.film_id
+INNER JOIN
+actor AS a ON fa.actor_id = a.actor_id
+INNER JOIN
+film_category AS fc ON f.film_id = fc.film_id
+INNER JOIN
+category AS c ON fc.category_id = c.category_id
+WHERE c.name = 'Horror' AND a.first_name = 'SUSAN' AND a.last_name = 'DAVIS'
+ORDER BY f.title ASC;
+
+-- Consulta D --
+SELECT f.rating, COUNT(*)
+FROM film AS f
+WHERE
+    f.original_language_id IN (
+        SELECT language_id
+        FROM language
+        WHERE name = 'French'
+    )
+GROUP BY f.rating
+ORDER BY count(*) DESC;
+
+-- Consluta E --
+SELECT a.first_name,a.last_name, COUNT(fa.film_id)
+FROM actor AS a
+INNER JOIN
+film_actor AS fa ON a.actor_id = fa.actor_id
+INNER JOIN
+film AS f ON fa.film_id = f.film_id
+WHERE f.rating IN ('PG', 'PG13', 'G')
+GROUP BY a.actor_id, a.first_name, a.last_name
+ORDER BY COUNT(fa.film_id) DESC;
